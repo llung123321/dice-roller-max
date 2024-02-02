@@ -39,9 +39,7 @@ app.post('/interactions', async function (req, res) {
    * See https://discord.com/developers/docs/interactions/application-commands#slash-commands
    */
   if (type === InteractionType.APPLICATION_COMMAND) {
-    const { name,description } = data;
-    
-    console.log(data)
+    const { name } = data;
 
     // "test" command
     if (name === 'test') {

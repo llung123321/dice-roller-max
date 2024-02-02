@@ -43,7 +43,6 @@ const CHALLENGE_COMMAND = {
 const ROLL_COMMAND = {
   name: 'roll',
   description: 'Rolls a specified number of dice with a specified number of sides',
-  type: 1,
   options: [
     {
       type: 1,
@@ -52,6 +51,7 @@ const ROLL_COMMAND = {
       required: true,
     },
   ],
+  type: 1,
 };
 
 const ALL_COMMANDS = [TEST_COMMAND, CHALLENGE_COMMAND, ROLL_COMMAND];
