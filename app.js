@@ -40,8 +40,6 @@ app.post('/interactions', async function (req, res) {
    */
   if (type === InteractionType.APPLICATION_COMMAND) {
     const { name,description } = data;
-    
-    console.log(data)
 
     // "test" command
     if (name === 'test') {
