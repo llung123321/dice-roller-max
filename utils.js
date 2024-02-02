@@ -60,3 +60,15 @@ export function getRandomEmoji() {
 export function capitalize(str) {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
+
+
+export function rollDice(numDice, numSides) {
+  const result = [];
+
+  for (let i = 0; i < numDice; i++) {
+      const roll = Math.floor(Math.random() * numSides) + 1;
+      result.push(roll);
+  }
+
+  return result;
+}
