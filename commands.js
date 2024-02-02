@@ -44,14 +44,14 @@ const ROLL_COMMAND = {
   name: 'roll',
   description: 'Rolls a specified number of dice with a specified number of sides',
   type: 1,
-  execute: (data) => {
-    if (!data || !data.options || data.options.length === 0) {
-      return 'Invalid command options';
-    }
-    const numDice = data.options[0].value;
-    const numSides = data.options[1].value;
-    return rollDice(numDice, numSides);
-  },
+  options: [
+    {
+      type: 1,
+      name: 'object',
+      description: 'Pick your object',
+      required: true,
+    },
+  ],
 };
 
 const ALL_COMMANDS = [TEST_COMMAND, CHALLENGE_COMMAND, ROLL_COMMAND];
