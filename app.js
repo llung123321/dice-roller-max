@@ -55,13 +55,20 @@ app.post('/interactions', async function (req, res) {
       });
     }
     // "roll" command
-    if(name === 'roll'){
-      // Send a message into the channel where command was triggered from
+    if (name === 'roll') {
+      const message = data.options[0].value;
+      const [numDice, numSides] = message.split('d');
+      const result = [];
+
+      for (let i = 0; i < numDice; i++) {
+        const roll = Math.floor(Math.random() * numSides) + 1;
+        result.push(roll);
+      }
+
       return res.send({
         type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
         data: {
-          // Fetches a random emoji to send from a helper function
-          content: 'hello world Leo'+data.description,
+          content: `You rolled ${result.join(', ')}`,
         },
       });
     }

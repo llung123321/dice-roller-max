@@ -42,7 +42,7 @@ const CHALLENGE_COMMAND = {
 
 const ROLL_COMMAND = {
   name: 'roll',
-  description: 'Basic command',
+  description: 'Rolls a specified number of dice with a specified number of sides',
   type: 1,
 };
 
