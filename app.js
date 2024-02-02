@@ -55,11 +55,18 @@ app.post('/interactions', async function (req, res) {
     // "roll" command
     if (name === 'roll') {
       const message = data.options[0].value;
-      let [dice, modifier] = message.split('+');
+      let [dice, ...modifiers] = message.split('+');
       const [numDice, numSides] = dice.split('d');
       const result = [];
     
-      modifier = modifier ? parseInt(modifier) : 0;
+      let modifierSum = 0;
+      let modifierDetails = [];
+      modifiers.forEach(modifier => {
+        let [number, description] = modifier.split('(');
+        number = parseInt(number);
+        modifierSum += number;
+        modifierDetails.push({number, description: description ? description.slice(0, -1) : ''});
+      });
     
       let sum = 0;
       for (let i = 0; i < numDice; i++) {
@@ -68,12 +75,12 @@ app.post('/interactions', async function (req, res) {
         result.push(roll);
       }
     
-      sum += modifier;
+      sum += modifierSum;
     
       return res.send({
         type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
         data: {
-          content: `You rolled ${result.map(r => `🎲${r}`).join(', ')}. The total is ${sum}.`,
+          content: `You rolled ${message} : ${result.map(r => `🎲${r}`).join(', ')} + ${modifierDetails.map(mod => `${mod.number}(${mod.description})`).join(' + ')} = ${sum}.`,
         },
       });
     }
