@@ -80,7 +80,7 @@ app.post('/interactions', async function (req, res) {
       return res.send({
         type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
         data: {
-          content: `You rolled ${message} : ${result.map(r => `🎲${r}`).join(', ')} + ${modifierDetails.map(mod => `${mod.number}(${mod.description})`).join(' + ')} = ${sum}.`,
+          content: `You rolled ${message} : ${result.map(r => `🎲${r}`).join(', ')} + ${modifierDetails.map(mod => `${mod.number}${mod.description ? `(${mod.description})` : ''}`).join(' + ')} = ${sum}.`,
         },
       });
     }
