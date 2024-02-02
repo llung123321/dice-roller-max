@@ -57,18 +57,25 @@ app.post('/interactions', async function (req, res) {
     // "roll" command
     if (name === 'roll') {
       const message = data.options[0].value;
-      const [numDice, numSides] = message.split('d');
+      let [dice, modifier] = message.split('+');
+      const [numDice, numSides] = dice.split('d');
       const result = [];
-
+    
+      modifier = modifier ? parseInt(modifier) : 0;
+    
+      let sum = 0;
       for (let i = 0; i < numDice; i++) {
         const roll = Math.floor(Math.random() * numSides) + 1;
+        sum += roll;
         result.push(roll);
       }
-
+    
+      sum += modifier;
+    
       return res.send({
         type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
         data: {
-          content: `You rolled ${result.join(', ')}`,
+          content: `You rolled ${result.map(r => `🎲${r}`).join(', ')}. The total is ${sum}.`,
         },
       });
     }

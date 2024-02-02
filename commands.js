@@ -47,8 +47,8 @@ const ROLL_COMMAND = {
   options: [
     {
       type: 1,
-      name: 'object',
-      description: 'Pick your object',
+      name: 'Rolls',
+      description: '1d100',
       required: true,
     },
   ],
