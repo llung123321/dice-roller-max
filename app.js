@@ -55,17 +55,27 @@ app.post('/interactions', async function (req, res) {
     // "roll" command
     if (name === 'roll') {
       const message = data.options[0].value;
-      let [dice, ...modifiers] = message.split('+');
+      let [dice, ...parts] = message.split(' ');
       const [numDice, numSides] = dice.split('d');
       const result = [];
     
       let modifierSum = 0;
+      let multiplierProduct = 1;
       let modifierDetails = [];
-      modifiers.forEach(modifier => {
-        let [number, description] = modifier.split('(');
-        number = parseInt(number);
-        modifierSum += number;
-        modifierDetails.push({number, description: description ? description.slice(0, -1) : ''});
+      let multiplierDetails = [];
+    
+      parts.forEach(part => {
+        if (part.includes('+')) {
+          let [number, description] = part.split('+')[1].split('(');
+          number = parseInt(number);
+          modifierSum += number;
+          modifierDetails.push({number, description: description ? description.slice(0, -1) : ''});
+        } else if (part.includes('*')) {
+          let [number, description] = part.split('*')[1].split('(');
+          number = parseInt(number);
+          multiplierProduct *= number;
+          multiplierDetails.push({number, description: description ? description.slice(0, -1) : ''});
+        }
       });
     
       let sum = 0;
@@ -75,12 +85,12 @@ app.post('/interactions', async function (req, res) {
         result.push(roll);
       }
     
-      sum += modifierSum;
+      sum = (sum + modifierSum) * multiplierProduct;
     
       return res.send({
         type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
         data: {
-          content: `You rolled ${message} : ${result.map(r => `🎲${r}`).join(', ')} + ${modifierDetails.map(mod => `${mod.number}${mod.description ? `(${mod.description})` : ''}`).join(' + ')} = ${sum}.`,
+          content: `You rolled ${message} : ${result.map(r => `🎲${r}`).join(', ')} + ${modifierDetails.map(mod => `${mod.number}${mod.description ? `(${mod.description})` : ''}`).join(' + ')} * ${multiplierDetails.map(mult => `${mult.number}${mult.description ? `(${mult.description})` : ''}`).join(' * ')} = ${sum}.`,
         },
       });
     }
