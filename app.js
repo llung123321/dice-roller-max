@@ -88,7 +88,11 @@ app.post('/interactions', async function (req, res) {
     
       sum = (sum + modifierSum) * multiplierProduct;
     
-      let content = `You rolled ${message} : ${result.map(r => `🎲${r}`).join(', ')} + ${modifierDetails.map(mod => `${mod.number}${mod.description ? `(${mod.description})` : ''}`).join(' + ')}`;
+      let content = `You rolled ${message} : ${result.map(r => `🎲${r}`).join(', ')}`;
+    
+      if (modifierDetails.length > 0) {
+        content += ` + ${modifierDetails.map(mod => `${mod.number}${mod.description ? `(${mod.description})` : ''}`).join(' + ')}`;
+      }
     
       if (multiplierDetails.length > 0) {
         content += ` \\* ${multiplierDetails.map(mult => `${mult.number}${mult.description ? `(${mult.description})` : ''}`).join(' \\* ')}`;
