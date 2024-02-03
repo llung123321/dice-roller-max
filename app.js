@@ -55,47 +55,47 @@ app.post('/interactions', async function (req, res) {
     // "roll" command
     if (name === 'roll') {
       const message = data.options[0].value;
-      let [dice, ...parts] = message.split(' ');
-      const [numDice, numSides] = dice.split('d');
+      let parts = message.split(' ').join('').split(/(\+|\*)/);
+      const [numDice, numSides] = parts[0].split('d');
       const result = [];
-
+    
       let modifierSum = 0;
       let multiplierProduct = 1;
       let modifierDetails = [];
       let multiplierDetails = [];
-
-      parts.forEach(part => {
+    
+      for (let i = 1; i < parts.length; i += 2) {
         let number, description;
-        if (part.includes('+')) {
-          [number, description] = part.replace('+', '').split('(');
+        if (parts[i] === '+') {
+          [number, description] = parts[i+1].split('(');
           number = parseInt(number.trim());
           modifierSum += number;
-          modifierDetails.push({ number, description: description ? description.slice(0, -1) : '' });
-        } else if (part.includes('*')) {
-          [number, description] = part.replace('*', '').split('(');
+          modifierDetails.push({number, description: description ? description.slice(0, -1) : ''});
+        } else if (parts[i] === '*') {
+          [number, description] = parts[i+1].split('(');
           number = parseInt(number.trim());
           multiplierProduct *= number;
-          multiplierDetails.push({ number, description: description ? description.slice(0, -1) : '' });
+          multiplierDetails.push({number, description: description ? description.slice(0, -1) : ''});
         }
-      });
-
+      }
+    
       let sum = 0;
       for (let i = 0; i < numDice; i++) {
         const roll = Math.floor(Math.random() * numSides) + 1;
         sum += roll;
         result.push(roll);
       }
-
+    
       sum = (sum + modifierSum) * multiplierProduct;
-
+    
       let content = `You rolled ${message} : ${result.map(r => `🎲${r}`).join(', ')} + ${modifierDetails.map(mod => `${mod.number}${mod.description ? `(${mod.description})` : ''}`).join(' + ')}`;
-
+    
       if (multiplierDetails.length > 0) {
-        content += ` * ${multiplierDetails.map(mult => `${mult.number}${mult.description ? `(${mult.description})` : ''}`).join(' * ')}`;
+        content += ` \\* ${multiplierDetails.map(mult => `${mult.number}${mult.description ? `(${mult.description})` : ''}`).join(' \\* ')}`;
       }
-
+    
       content += ` = ${sum}.`;
-
+    
       return res.send({
         type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
         data: {
