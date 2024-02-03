@@ -67,12 +67,12 @@ app.post('/interactions', async function (req, res) {
       parts.forEach(part => {
         if (part.includes('+')) {
           let [number, description] = part.split('+')[1].split('(');
-          number = parseInt(number);
+          number = parseInt(number.trim());
           modifierSum += number;
           modifierDetails.push({number, description: description ? description.slice(0, -1) : ''});
         } else if (part.includes('*')) {
           let [number, description] = part.split('*')[1].split('(');
-          number = parseInt(number);
+          number = parseInt(number.trim());
           multiplierProduct *= number;
           multiplierDetails.push({number, description: description ? description.slice(0, -1) : ''});
         }
