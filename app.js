@@ -55,14 +55,16 @@ app.post('/interactions', async function (req, res) {
     // "roll" command
     if (name === 'roll') {
       const message = data.options[0].value;
-      let parts = message.split(' ').join('').split(/(\+|\*)/);
+      let parts = message.split(' ').join('').split(/(\+|\-|\*)/);
       const [numDice, numSides] = parts[0].split('d');
       const result = [];
     
       let modifierSum = 0;
       let multiplierProduct = 1;
+      let subtractorSum = 0;
       let modifierDetails = [];
       let multiplierDetails = [];
+      let subtractorDetails = [];
     
       for (let i = 1; i < parts.length; i += 2) {
         let number, description;
@@ -76,6 +78,11 @@ app.post('/interactions', async function (req, res) {
           number = parseInt(number.trim());
           multiplierProduct *= number;
           multiplierDetails.push({number, description: description ? description.slice(0, -1) : ''});
+        } else if (parts[i] === '-') {
+          [number, description] = parts[i+1].split('(');
+          number = parseInt(number.trim());
+          subtractorSum += number;
+          subtractorDetails.push({number, description: description ? description.slice(0, -1) : ''});
         }
       }
     
@@ -86,12 +93,16 @@ app.post('/interactions', async function (req, res) {
         result.push(roll);
       }
     
-      sum = (sum + modifierSum) * multiplierProduct;
+      sum = (sum + modifierSum - subtractorSum) * multiplierProduct;
     
       let content = `You rolled ${message} : ${result.map(r => `🎲${r}`).join(', ')}`;
     
       if (modifierDetails.length > 0) {
         content += ` + ${modifierDetails.map(mod => `${mod.number}${mod.description ? `(${mod.description})` : ''}`).join(' + ')}`;
+      }
+    
+      if (subtractorDetails.length > 0) {
+        content += ` - ${subtractorDetails.map(sub => `${sub.number}${sub.description ? `(${sub.description})` : ''}`).join(' - ')}`;
       }
     
       if (multiplierDetails.length > 0) {
